@@ -21,7 +21,11 @@ return new class extends Migration
 
             $table->timestamps();
 
+            //Creating the foreign key like column "reference" to column "on" nthe table and "on Delete" what action will happen what cascade means is that on deletion of the id the reviews related to it also be removed i.e. reviews are asssociated with a book always(must)
             $table->foreign('book_id')->references('id')->on('books')->onDelete('cascade');
+            //a short hand syntax which will rep,ace line 17 and line 25
+            //$table->foreignId('book_id')->constrained()->cascadeOnDelete
+
         });
     }
 

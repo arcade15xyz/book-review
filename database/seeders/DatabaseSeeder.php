@@ -21,6 +21,12 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
+
+
+
+        /**
+         * Using a "factory" method for creating instance of the model then "create" collection of model and presist them to database then "each" for each of the factory instance for model Review with "count" and a custom state method "good()" which is "for" $book object for current instance and create it so both book and its reviews are created here
+         */
         Book::factory(33)->create()->each(function($book){
             $numReviews = random_int(5,30);
 
@@ -28,6 +34,10 @@ class DatabaseSeeder extends Seeder
 
         });
 
+
+        /**
+         * Using a "factory" method for creating instance of the model then "create" collection of model and presist them to database then "each" for each of the factory instance for model Review with "count" and a custom state method "avg()" which is "for" $book object for current instance and create it so both book and its reviews are created here
+         */
         Book::factory(33)->create()->each(function($book){
             $numReviews = random_int(5,30);
 
@@ -35,6 +45,9 @@ class DatabaseSeeder extends Seeder
 
         });
 
+        /**
+         * Using a "factory" method for creating instance of the model then "create" collection of model and presist them to database then "each" for each of the factory instance for model Review with "count" and a custom state method "bad()" which is "for" $book object for current instance and create it so both book and its reviews are created here
+         */
         Book::factory(33)->create()->each(function($book){
             $numReviews = random_int(5,30);
 
