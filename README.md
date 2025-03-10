@@ -57,7 +57,7 @@ So whats happening here is that we are using relation one to many and using thes
  what this will do is it will provide us the book for which that review is made;
 
 
-## If we need to change relation of review to other book 
+ ## If we need to change relation of review to other book 
 ```
 //initially the book_id = 1
 $review = \App\Models\Review::find(1);
@@ -71,4 +71,38 @@ $book2 = \App\Models\Book::find(2);
 //save the $review form book_id=1 to book_id=2;
 $book2->reviews()->save($review);
 
+```
+
+ ## How to search 
+```
+\App\Models\Book::where('title', 'LIKE', '%delectus%')->get();
+```
+
+
+# Local Query Scope
+What local Query scope is that we make methods that scopes queries with some action i.e. :apple:\ instead of using the query we just use these **Local Query Scope**. This local Query scope is declare/defined in the model;
+The Query Scope is declared with 'scope' as prefix and when calling it this prefix is discarded;
+***example :arrow_heading_down:***
+```
+//In Book Model
+
+public function scopeTitle(Builder $query, string $title)
+{
+    return $query->where('title', 'LIKE', '%'.$title.'%');
+}
+```
+***How is it used***
+```
+\App\Models\Book::title('qui')->get();
+```
+
+We can use some adder parameters here like below :arrow_heading_down:
+```
+\App\Models\Book::title('qui')->where('created_at', ">=", "2024-01-01")->get();
+```
+
+***Misslinious***
+if we want to know the vanilla sql query in the terminal use :arrow_heading_down:
+```
+\App\Models\Book::title('delecturs')->where('created_at', '>', '2024-01-01')->toSql();
 ```
