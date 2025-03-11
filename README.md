@@ -55,7 +55,7 @@ $book->reviews;
 $book = App\Models\Book::find(1);
 
 //What is happening here is we are creating a review for the book using associtaion / relation
-$review = $book->reviews()->create(['reviews' => 'A very Good book], 'rating' => 5);
+$review = $book->reviews()->create(['reviews' => 'A very Good book'], 'rating' => 5);
 ```
 
 ### To find the book through a review
