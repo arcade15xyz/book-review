@@ -2,8 +2,6 @@
 
 So whats happening here is that we are using relation one to many and using these relationship for making a **Book and Review**
 
-
-
 ## Qurerying and Associting Realted Models
 
 ### To get the book data for a specific book this is lazy loading
@@ -91,8 +89,6 @@ $book2->reviews()->save($review);
 \App\Models\Book::where('title', 'LIKE', '%delectus%')->get();
 ```
 
-
-
 ## Local Query Scope
 
 What local Query scope is that we make methods that scopes queries with some action i.e. :apple:\ instead of using the query we just use these **Local Query Scope**. This local Query scope is declare/defined in the model;
@@ -126,8 +122,6 @@ if we want to know the vanilla sql query in the terminal use :arrow_heading_down
 ```
 \App\Models\Book::title('delecturs')->where('created_at', '>', '2024-01-01')->toSql();
 ```
-
-
 
 ## Aggregation on Relations
 
@@ -166,15 +160,35 @@ What this **Eloquent query** does is it retrieves all books from database along 
 ```
 \App\Models\Book::limit(5)->withAvg('reviews','rating')->orderBy('reviews_avg_rating')->get();
 ```
-It show the details of 5 books by **reviews_avg_rating** ascending mode
 
+It show the details of 5 books by **reviews_avg_rating** ascending mode
 
 ```
 \App\Models\Book:withCount('reviews')->withAvg('reviews','rating')->having('reviews_count','>=', 10)->orderBy('reviews_avg_rating','desc')->limit(10)->get();
 ```
-It shows 10 book data according ordered by the *reviews_avg_rating* in desc which are having *reviews_count* greater than 10 and add *reviews_avg_rating* and *reviews_count*.
+
+It shows 10 book data according ordered by the _reviews_avg_rating_ in desc which are having _reviews_count_ greater than 10 and add _reviews_avg_rating_ and _reviews_count_.
 
 🔑 In case multiple Aggregation are done as in above example it gives us multiple attributes .
 
 **_Misslinious_**
-In case of query on Aggregation on relation we use *having* instead of *where* **query builder method**.
+In case of query on Aggregation on relation we use _having_ instead of _where_ **query builder method**.
+
+## Highest Rated and Popular Books
+
+### 🔑 Comparing $this vs $query in Context
+
+    **$this (instance) **
+    🐤 Works on : A **single** model instance
+    🐤 Used in : Instance methods
+    🐤 Example : $this->title
+    🐤 When to use : Access model properties, call         relations
+
+    **$query (Query Builder)
+    🐤 Works on : A **query on multiple** model
+    🐤 Used in : Scope methods (`scopeXyz()`)
+    🐤 Example : $query->having('title','laravel');
+    🐤 When to use : Modify queries, apply filters
+
+🚀 `where()` is used for direct column filtering before aggregation.
+🚀 `having()` is used for filtering aggregated results (like COUNT(), AVG()).

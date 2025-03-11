@@ -26,7 +26,30 @@ class Book extends Model
      * @param string $title
      * @return Builder
      */
-    public function scopeTitle(Builder $query, string $title) {
-        return $query->where('title','LIKE', '%'. $title .'%');
+    public function scopeTitle(Builder $query, string $title)
+    {
+        return $query->where('title', 'LIKE', '%' . $title . '%');
+    }
+
+    /**
+     * This Local Query Scope  return Builder with books with most 'review_count' in desending order.
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return Builder
+     */
+    public function scopePopular(Builder $query)
+    {
+        return $query->withCount('reviews')
+            ->orderBy('reviews_count', 'desc');
+    }
+
+    /**
+     * Return builder according to the 'reviews_avg_rating' in descending order for books
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return Builder
+     */
+    public function scopeHighestRated(Builder $query)
+    {
+        return $query->withAvg('reviews', 'rating')
+            ->orderBy('reviews_avg_rating', 'desc');
     }
 }
