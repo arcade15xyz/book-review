@@ -178,15 +178,61 @@ In case of query on Aggregation on relation we use _having_ instead of _where_ *
 
 ### 🔑 Comparing $this vs $query in Context
 **$this (instance)**
+
 🐤 Works on : A **single** model instance
+
 🐤 Used in : Instance methods
+
 🐤 Example : `$this->title`
-🐤 When to use : Access model properties, call        relations
+
+🐤 When to use : Access model properties, call relations
+
 **$query (Query Builder)**
+
 🐤 Works on : A **query on multiple** model
+
 🐤 Used in : Scope methods (`scopeXyz()`)
+
 🐤 Example : `$query->having('title','laravel');`
+
 🐤 When to use : Modify queries, apply filters
 
+
 🚀 `where()` is used for direct column filtering before aggregation.
+
 🚀 `having()` is used for filtering aggregated results (like COUNT(), AVG()).
+
+
+
+## Getting Books with recent reviews
+
+### Introduction
+
+**What did we learn**
+
+🔑 **Builder $query** 
+    <ol>
+        <li>It represents the current query being built
+            <ul>
+                <li>$query modifies the query dynamically</li>
+                <li>This allows chaning methods like (where(), orderby(), withCount()) without overriding the original query</li>
+            </ul>
+        </li>
+        <li>It makes query scopers reusables</li>
+        <ul>
+            <li>We can apply these query scopes in any query</li>
+        </ul>
+    </ol>
+
+```
+    public function scopePopular(Builder $query, $from = null, $to = null): Builder|QueryBuilder
+    {
+        return $query->withCount([
+            'reviews' => fn(Builder $q) => $this->dateRangeFilter($q, $from, $to)
+        ])
+            ->orderBy('reviews_count', 'desc');
+    }
+```
+This is a Query scope method in Book model for finding the most popular books in specific time periods. To find books in specific timeperiod we use dateRangeFilter which gives us all the books in that time period.
+
+***Kindly check the Book model to see the methods used***
