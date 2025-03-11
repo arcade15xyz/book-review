@@ -177,18 +177,16 @@ In case of query on Aggregation on relation we use _having_ instead of _where_ *
 ## Highest Rated and Popular Books
 
 ### 🔑 Comparing $this vs $query in Context
-
-    **$this (instance) **
-    🐤 Works on : A **single** model instance
-    🐤 Used in : Instance methods
-    🐤 Example : $this->title
-    🐤 When to use : Access model properties, call         relations
-
-    **$query (Query Builder)
-    🐤 Works on : A **query on multiple** model
-    🐤 Used in : Scope methods (`scopeXyz()`)
-    🐤 Example : $query->having('title','laravel');
-    🐤 When to use : Modify queries, apply filters
+**$this (instance)**
+🐤 Works on : A **single** model instance
+🐤 Used in : Instance methods
+🐤 Example : `$this->title`
+🐤 When to use : Access model properties, call        relations
+**$query (Query Builder)**
+🐤 Works on : A **query on multiple** model
+🐤 Used in : Scope methods (`scopeXyz()`)
+🐤 Example : `$query->having('title','laravel');`
+🐤 When to use : Modify queries, apply filters
 
 🚀 `where()` is used for direct column filtering before aggregation.
 🚀 `having()` is used for filtering aggregated results (like COUNT(), AVG()).
