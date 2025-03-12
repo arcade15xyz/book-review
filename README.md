@@ -32,7 +32,7 @@ $book->load('reviews');
 
 ### How to add a new review for the $book
 
-```
+```php
 $book = \App\Models\Book::find(1);
 
 $review = new \App\Model\Review();
@@ -49,7 +49,7 @@ $book->reviews;
 
 ### Now to add a review for a book we are getting the data via form so we need to assign $fillables in the "Review Model".
 
-```
+```php
 $book = App\Models\Book::find(1);
 
 //What is happening here is we are creating a review for the book using associtaion / relation
@@ -58,7 +58,7 @@ $review = $book->reviews()->create(['reviews' => 'A very Good book'], 'rating' =
 
 ### To find the book through a review
 
-```
+```php
 $review = App\Models\Review::find(1);
 
 $review->book;
@@ -68,7 +68,7 @@ what this will do is it will provide us the book for which that review is made;
 
 ### If we need to change relation of review to other book
 
-```
+```php
 //initially the book_id = 1
 $review = \App\Models\Review::find(1);
 
@@ -85,7 +85,7 @@ $book2->reviews()->save($review);
 
 ### How to search
 
-```
+```php
 \App\Models\Book::where('title', 'LIKE', '%delectus%')->get();
 ```
 
@@ -106,20 +106,20 @@ public function scopeTitle(Builder $query, string $title)
 
 **_How is it used_**
 
-```
+```php
 \App\Models\Book::title('qui')->get();
 ```
 
 We can use some adder parameters here like below :arrow_heading_down:
 
-```
+```php
 \App\Models\Book::title('qui')->where('created_at', ">=", "2024-01-01")->get();
 ```
 
 **_Misslinious_**
 if we want to know the vanilla sql query in the terminal use :arrow_heading_down:
 
-```
+```php
 \App\Models\Book::title('delecturs')->where('created_at', '>', '2024-01-01')->toSql();
 ```
 
@@ -137,13 +137,13 @@ so It's main feature is to provide add a new category for all books that we will
 
 What this **Eloquent query** does is it retrieves all books from database along with a **count** of their related reviews.
 
-```
+```php
 \App\Models\Book::withCount('reviews')->get();
 ```
 
 :key: Here **withCount('reviews')** Add a new **reviews_count** attribute that holds the number of reviews each book has.
 
-```
+```php
 \App\Models\Book::withCount('reviews')->latest()->limit(3)->get();
 ```
 
@@ -157,13 +157,13 @@ What this **Eloquent query** does is it retrieves all books from database along 
 
 **EXAMPLES**
 
-```
+```php
 \App\Models\Book::limit(5)->withAvg('reviews','rating')->orderBy('reviews_avg_rating')->get();
 ```
 
 It show the details of 5 books by **reviews_avg_rating** ascending mode
 
-```
+```php
 \App\Models\Book:withCount('reviews')->withAvg('reviews','rating')->having('reviews_count','>=', 10)->orderBy('reviews_avg_rating','desc')->limit(10)->get();
 ```
 
@@ -197,6 +197,13 @@ In case of query on Aggregation on relation we use _having_ instead of _where_ *
 
 🐤 When to use : Modify queries, apply filters
 
+| Category | $this (instance) | $query (Query Builder) |
+| :----: | ---- | ---- |
+| Works on | A **single** model instance | A **query on multiple** model |
+| Used in | Instance methods | Scope methods (`scopeXyz()`) |
+| Example | `$this->title` | `$query->having('title','laravel');`|
+| When to use | Access model properties, call relations |  Modify queries, apply filters|
+
 
 🚀 `where()` is used for direct column filtering before aggregation.
 
@@ -224,7 +231,7 @@ In case of query on Aggregation on relation we use _having_ instead of _where_ *
         </ul>
     </ol>
 
-```
+```php
     public function scopePopular(Builder $query, $from = null, $to = null): Builder|QueryBuilder
     {
         return $query->withCount([
@@ -235,4 +242,4 @@ In case of query on Aggregation on relation we use _having_ instead of _where_ *
 ```
 This is a Query scope method in Book model for finding the most popular books in specific time periods. To find books in specific timeperiod we use dateRangeFilter which gives us all the books in that time period.
 
-***Kindly check the Book model to see the methods used***
+***Kindly check the Book model to see the methods used***x
