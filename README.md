@@ -295,15 +295,16 @@ Route::resource('books', BookController::class);
 This automatically registers all seven routes for tasks using the TaskController.  
 So 'books' is the base url. And for any type of reqest(get, post, put, delete) it automatically does contorller actions.
 
-This is The table giving information on how the routes are choosen ⤵️  
-| HTTP Verb | URL | Controller Method | Purpose |
+This is The table giving information on how the routes are choosen ⤵️
+
+| HTTP Verb |       URL        | Controller Method | Purpose                             |
 | :-------: | :--------------: | :---------------: | ----------------------------------- |
-| GET | /tasks | index() | Show a list of all tasks |
-| GET | /tasks/create | create() | Show a form to create a new task |
-| POST | /tasks | store() | Store a newly created task |
-| GET | /tasks/{id} | show() | Show details of a specific task |
-| GET | /tasks/{id}/edit | edit() | Show a form to edit a specific task |
-| PUT/PATCH | /tasks/{id} | update() | Update a specific task |
-| DELETE | /tasks/{id} | destroy() | Delete a specific task |
+|    GET    |      /tasks      |      index()      | Show a list of all tasks            |
+|    GET    |  /tasks/create   |     create()      | Show a form to create a new task    |
+|   POST    |      /tasks      |      store()      | Store a newly created task          |
+|    GET    |   /tasks/{id}    |      show()       | Show details of a specific task     |
+|    GET    | /tasks/{id}/edit |      edit()       | Show a form to edit a specific task |
+| PUT/PATCH |   /tasks/{id}    |     update()      | Update a specific task              |
+|  DELETE   |   /tasks/{id}    |     destroy()     | Delete a specific task              |
 
 [To know more about **Resource Controller** click here](https://laravel.com/docs/12.x/controllers#resource-controllers)
