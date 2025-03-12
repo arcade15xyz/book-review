@@ -1,4 +1,4 @@
-# Books and Review Project
+# BOOKS AND REVIEW PROJECT
 
 So whats happening here is that we are using relation one to many and using these relationship for making a **Book and Review**
 
@@ -177,6 +177,7 @@ In case of query on Aggregation on relation we use _having_ instead of _where_ *
 ## Highest Rated and Popular Books
 
 ### 🔑 Comparing $this vs $query in Context
+
 **$this (instance)**
 
 🐤 Works on : A **single** model instance
@@ -197,19 +198,16 @@ In case of query on Aggregation on relation we use _having_ instead of _where_ *
 
 🐤 When to use : Modify queries, apply filters
 
-| Category | $this (instance) | $query (Query Builder) |
-| :----: | ---- | ---- |
-| Works on | A **single** model instance | A **query on multiple** model |
-| Used in | Instance methods | Scope methods (`scopeXyz()`) |
-| Example | `$this->title` | `$query->having('title','laravel');`|
-| When to use | Access model properties, call relations |  Modify queries, apply filters|
-
+|  Category   | $this (instance)                        | $query (Query Builder)               |
+| :---------: | --------------------------------------- | ------------------------------------ |
+|  Works on   | A **single** model instance             | A **query on multiple** model        |
+|   Used in   | Instance methods                        | Scope methods (`scopeXyz()`)         |
+|   Example   | `$this->title`                          | `$query->having('title','laravel');` |
+| When to use | Access model properties, call relations | Modify queries, apply filters        |
 
 🚀 `where()` is used for direct column filtering before aggregation.
 
 🚀 `having()` is used for filtering aggregated results (like COUNT(), AVG()).
-
-
 
 ## Getting Books with recent reviews
 
@@ -217,19 +215,20 @@ In case of query on Aggregation on relation we use _having_ instead of _where_ *
 
 **What did we learn**
 
-🔑 **Builder $query** 
-    <ol>
-        <li>It represents the current query being built
-            <ul>
-                <li>$query modifies the query dynamically</li>
-                <li>This allows chaning methods like (where(), orderby(), withCount()) without overriding the original query</li>
-            </ul>
-        </li>
-        <li>It makes query scopers reusables</li>
-        <ul>
-            <li>We can apply these query scopes in any query</li>
-        </ul>
-    </ol>
+🔑 **Builder $query**
+
+<ol>
+<li>It represents the current query being built
+<ul>
+<li>$query modifies the query dynamically</li>
+<li>This allows chaning methods like (where(), orderby(), withCount()) without overriding the original query</li>
+</ul>
+</li>
+<li>It makes query scopers reusables</li>
+<ul>
+<li>We can apply these query scopes in any query</li>
+</ul>
+</ol>
 
 ```php
     public function scopePopular(Builder $query, $from = null, $to = null): Builder|QueryBuilder
@@ -240,6 +239,71 @@ In case of query on Aggregation on relation we use _having_ instead of _where_ *
             ->orderBy('reviews_count', 'desc');
     }
 ```
+
 This is a Query scope method in Book model for finding the most popular books in specific time periods. To find books in specific timeperiod we use dateRangeFilter which gives us all the books in that time period.
 
-***Kindly check the Book model to see the methods used***x
+**_Kindly check the Book model to see the methods used_**x
+
+## Controllers and Resource Controllers
+
+So instead of using all our request handling logic as closure in our route we will organize this behaviour using **controller** class.  
+Controller can group related requests handling logic in a single class.  
+**Example :arrow_heading_down:**  
+UserController class can manage all the request handling logic related to _users_, including _showing_, _creating_, _updating_ and _deleting_ the user.
+
+**_How to build a controller_**
+
+```
+php artisan make:controller UserController
+```
+
+what is does is it make a controller in app\Http\Controllers\UserController which will be used in routes like following ⤵️
+
+```php
+    use App\Http\Controllers\UserController;
+    Route::get('user/{id}', [controller: UserController::class, action: 'show'])
+```
+
+[For more knowledge on topic **CONTROLLER** click here](https://laravel.com/docs/12.x/controllers#introduction)
+
+**Resource Controller**  
+This is used in common used case i.e The Controller handles **CRUD**(Create, Read, Update, Delete) requests so we use resource controller to make actions like index, create, show, store, edit, update and destroy.
+
+**_How to create a Resource Controller_**
+
+```
+php artisan make:controller BookController --resource
+```
+
+What this does is it creates a Contoller with following functions(actions) automatically:
+
+1. index()
+1. create()
+1. store()
+1. show()
+1. edit()
+1. update()
+1. destroy()
+
+How to use this in _route_ ⤵️
+
+```php
+use App\Http\Controllers\BookController;
+Route::resource('books', BookController::class);
+```
+
+This automatically registers all seven routes for tasks using the TaskController.  
+So 'books' is the base url. And for any type of reqest(get, post, put, delete) it automatically does contorller actions.
+
+This is The table giving information on how the routes are choosen ⤵️  
+| HTTP Verb | URL | Controller Method | Purpose |
+| :-------: | :--------------: | :---------------: | ----------------------------------- |
+| GET | /tasks | index() | Show a list of all tasks |
+| GET | /tasks/create | create() | Show a form to create a new task |
+| POST | /tasks | store() | Store a newly created task |
+| GET | /tasks/{id} | show() | Show details of a specific task |
+| GET | /tasks/{id}/edit | edit() | Show a form to edit a specific task |
+| PUT/PATCH | /tasks/{id} | update() | Update a specific task |
+| DELETE | /tasks/{id} | destroy() | Delete a specific task |
+
+[To know more about **Resource Controller** click here](https://laravel.com/docs/12.x/controllers#resource-controllers)
