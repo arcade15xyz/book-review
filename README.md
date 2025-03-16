@@ -318,3 +318,6 @@ i.e here if $book->reviews_count is 1 then 'review' is sent if it is more than 1
 out of  {{ $book->reviews_count }} {{ Str::plural('review', $book->reviews_count) }}
 </div>
 ```
+
+## Filter Books by Title - Adding the Form  
+so what happens here is simple in *index.blade.php* we simply based on the searched value of **title** we find all the books with similar titles.
