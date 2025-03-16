@@ -378,3 +378,18 @@ $books = match($filter) {
 ```
 what *match* does is it kinda behaves as switch case. 
 so based on *$filter* we decide query to be used
+
+### ONE BOOK PAGE (show)
+We made another book view namely **show.blade.php** which shows us the reviews and details of the books.   
+In the **Book controller** in function *store* we use eager loading using *load* and a additional query for filtering.   
+```php
+    public function show(Book $book)
+    {
+
+        return view('books.show',[
+            'book'=> $book->load([
+                'reviews' => fn($query) => $query->latest()
+            ])
+        ]);
+    }
+```

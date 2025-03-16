@@ -26,7 +26,7 @@ class BookController extends Controller
             'popular_last_month' => $books->popularLastMonth(),
             'popular_last_6month' => $books->popularLast6Months(),
             'highest_rated_last_month' => $books->highestRatedLastMonth(),
-            'Highest_Rated_last_6month' => $books->highestRatedLast6Months(),
+            'highest_rated_last_6months' => $books->highestRatedLast6Months(),
             default => $books->latest()
         };
 
@@ -52,11 +52,18 @@ class BookController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Summary of show: Display the specified resource. And we are using the eager load relation on model with some additional query or filtering.
+     * @param \App\Models\Book $book
+     * @return \Illuminate\Contracts\View\View
      */
-    public function show(string $id)
+    public function show(Book $book)
     {
-        //
+
+        return view('books.show',[
+            'book'=> $book->load([
+                'reviews' => fn($query) => $query->latest()
+            ])
+        ]);
     }
 
     /**
