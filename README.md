@@ -95,7 +95,7 @@ What local Query scope is that we make methods that scopes queries with some act
 The Query Scope is declared with 'scope' as prefix and when calling it this prefix is discarded;
 **_example :arrow_heading_down:_**
 
-```
+```php
 //In Book Model
 
 public function scopeTitle(Builder $query, string $title)
@@ -131,7 +131,7 @@ Aggregation functions( like count(), sum(), avg(), min() and max() )allows us to
 
 so It's main feature is to provide add a new category for all books that we will get with name like
 :white_check_mark: withCount('reviews') :point_right: **\*review_count**
-:white_check_mark: withAvg('reviews', 'rating') :point_right: **\*review_avg_rating**
+:white_check_mark: withAvg('reviews', 'rating') :point_right: ***review_avg_rating**
 
 ### Using Count (withCount());
 
@@ -293,18 +293,28 @@ Route::resource('books', BookController::class);
 ```
 
 This automatically registers all seven routes for tasks using the TaskController.  
-So 'books' is the base url. And for any type of reqest(get, post, put, delete) it automatically does contorller actions.
+So 'books' is the base url. And for any type of reqest(get, post, put, delete) it automatically does contorller actions, _The route names will also be automatically defined with this template {{baseurl . controller_method}}_
 
 This is The table giving information on how the routes are choosen ⤵️
 
-| HTTP Verb |        URL         | Controller Method | Purpose                             |
-| :-------: | :----------------: | :---------------: | ----------------------------------- |
-|    GET    |       /tasks       |      index()      | Show a list of all tasks            |
-|    GET    |   /tasks/create    |     create()      | Show a form to create a new task    |
-|   POST    |       /tasks       |      store()      | Store a newly created task          |
-|    GET    |   /tasks/{task}    |      show()       | Show details of a specific task     |
-|    GET    | /tasks/{task}/edit |      edit()       | Show a form to edit a specific task |
-| PUT/PATCH |   /tasks/{task}    |     update()      | Update a specific task              |
-|  DELETE   |   /tasks/{task}    |     destroy()     | Delete a specific task              |
+| HTTP Verb |        URL         | Controller Method | Purpose                             |  Route Name   |
+| :-------: | :----------------: | :---------------: | ----------------------------------- | :-----------: |
+|    GET    |       /books       |      index()      | Show a list of all tasks            |  books.index  |
+|    GET    |   /books/create    |     create()      | Show a form to create a new task    | books.create  |
+|   POST    |       /books       |      store()      | Store a newly created task          |  books.store  |
+|    GET    |   /books/{book}    |      show()       | Show details of a specific task     |  books.show   |
+|    GET    | /books/{book}/edit |      edit()       | Show a form to edit a specific task |  books.edit   |
+| PUT/PATCH |   /books/{book}    |     update()      | Update a specific task              | books.update  |
+|  DELETE   |   /books/{book}    |     destroy()     | Delete a specific task              | books.destroy |
 
 [To know more about **Resource Controller** click here](https://laravel.com/docs/12.x/controllers#resource-controllers)
+
+**In books.index**  
+We are using *Str::plural('review',$book->reviews_count)*
+what it does is it generated plural or singular of value based on value and count respectively.  
+i.e here if $book->reviews_count is 1 then 'review' is sent if it is more than 1 then 'reviews' renders.  
+```php
+<div class="book-review-count">
+out of  {{ $book->reviews_count }} {{ Str::plural('review', $book->reviews_count) }}
+</div>
+```

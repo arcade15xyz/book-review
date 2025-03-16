@@ -2,16 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Book;
 use Illuminate\Http\Request;
 
 class BookController extends Controller
 {
     /**
      * Display a listing of the resource.
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\View\View
+     *
+     * function when : when the value is true or not null the callback function will run else not.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $title = $request->input('title');
+        $books = Book::when($title, fn($query, $title) => $query->title($title))->get();
+
+        return view('books.index', ['books'=> $books]);
     }
 
     /**
