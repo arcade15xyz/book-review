@@ -131,7 +131,7 @@ Aggregation functions( like count(), sum(), avg(), min() and max() )allows us to
 
 so It's main feature is to provide add a new category for all books that we will get with name like
 :white_check_mark: withCount('reviews') :point_right: **\*review_count**
-:white_check_mark: withAvg('reviews', 'rating') :point_right: ***review_avg_rating**
+:white_check_mark: withAvg('reviews', 'rating') :point_right: **\*review_avg_rating**
 
 ### Using Count (withCount());
 
@@ -310,14 +310,54 @@ This is The table giving information on how the routes are choosen ⤵️
 [To know more about **Resource Controller** click here](https://laravel.com/docs/12.x/controllers#resource-controllers)
 
 **In books.index**  
-We are using *Str::plural('review',$book->reviews_count)*
+We are using _Str::plural('review',$book->reviews_count)_
 what it does is it generated plural or singular of value based on value and count respectively.  
-i.e here if $book->reviews_count is 1 then 'review' is sent if it is more than 1 then 'reviews' renders.  
+i.e here if $book->reviews_count is 1 then 'review' is sent if it is more than 1 then 'reviews' renders.
+
 ```php
 <div class="book-review-count">
 out of  {{ $book->reviews_count }} {{ Str::plural('review', $book->reviews_count) }}
 </div>
 ```
 
-## Filter Books by Title - Adding the Form  
-so what happens here is simple in *index.blade.php* we simply based on the searched value of **title** we find all the books with similar titles.
+## Filter Books by Title - Adding the Form
+
+so what happens here is simple in _index.blade.php_ we simply based on the searched value of **title** we find all the books with similar titles.
+
+## Popular or Highest rated - View and Logic
+
+### VIEW
+
+so first well make a view in which on clicking the options style changes.
+
+```php
+<form method="GET" action="{{ route('books.index') }}" class="mb-4 flex items-center space-x-2">
+    <input type="text" name="title" placeholder="Search by title" value="{{ request('title') }}" class="input h-10"/>
+    <input type="hidden" name="filter" value="{{ request('filter') }}"/>
+    <button type="submit" class="btn h-10">Search</button>
+    <a href="{{ route('books.index') }}" class="btn h-10">Clear</a>
+</form>
+
+<div class="filter-container mb-4 flex">
+    @php
+        $filters = [
+            '' => 'Latest' ,
+            'popular_last_month' => 'Popular Last Month',
+            'popular_last_6month' => 'popular Last 6 Months',
+            'highest_rated_last_month' => 'Highest Rated Last Month',
+            'highest_rated_last_6month' => 'Highest Rated last 6 Months'
+        ];
+    @endphp
+
+    @foreach ($filters as $key => $label)
+    <a href="{{ route('books.index',[ ...request()->query(), 'filter'=> $key]) }}" class="{{ request('filter') === $key || (request('filter')=== null && $key === '') ? 'filter-item-active' : 'filter-item' }}">
+        {{ $label }}
+    </a>
+    @endforeach
+
+</div>
+```
+
+So whats happening here let's first talk about filters these are the filters for the data namely _latest, popular last month, popular last 6 months, Highest Rated Last Months, Highest Rated Last 6 months_ these are with keys and labels.  
+In for each in _anchor tag_ we provide route name, [all request Query, the key to the filter] this is so that the view for these filters is enabled whenever we view page see class too as that works for starting rendering.  
+Now, lets talk about **form** we added a **hidden input** type with _name = filter_ and _value = {{ request('filter') }}_ this is done because when ever the form is submitted the view gets to default and don't show previously choosen filter now this will work. And Hidden input is not shown too just submitted as request.
