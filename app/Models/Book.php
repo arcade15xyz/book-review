@@ -95,4 +95,44 @@ class Book extends Model
     {
         return $query->having('reviews_count', '>=', $minReviews);
     }
+
+    /**
+     * Summary of scopePopularLastMonth: So it shows the popular books in last month according to the highest rated with 2 minimum views
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     */
+    public function scopePopularLastMonth(Builder $query){
+        return $query->popular(now()->subMonth(), now())
+        ->highestRated(now()->subMonth(), now())
+        ->minReviews(2);
+    }
+
+    /**
+     * Summary of scopePopularLast6Months: So it shows the popular books in last 6 month according to the highest rated with 5 minimum views
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     */
+    public function scopePopularLast6Months(Builder $query){
+        return $query->popular(now()->subMonths(6), now())
+        ->highestRated(now()->subMonths(6), now())
+        ->minReviews(5);
+    }
+
+    /**
+     * Summary of scopeHighestRatedLastMonth: So it shows the highest rated books in last month according the popular books with 2 minimum views
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     */
+    public function scopeHighestRatedLastMonth(Builder $query){
+        return $query->highestRated(now()->subMonth(), now())
+        ->Popular(now()->subMonth(), now())
+        ->minReviews(2);
+    }
+
+    /**
+     * Summary of scopeHighestRatedLast6Months: So it shows the highest rated books in last 6 month according the popular books with 5 minimum views
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     */
+    public function scopeHighestRatedLast6Months(Builder $query){
+        return $query->highestRated(now()->subMonths(6), now())
+        ->Popular(now()->subMonths(6), now())
+        ->minReviews(5);
+    }
 }

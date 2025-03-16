@@ -361,3 +361,20 @@ so first well make a view in which on clicking the options style changes.
 So whats happening here let's first talk about filters these are the filters for the data namely _latest, popular last month, popular last 6 months, Highest Rated Last Months, Highest Rated Last 6 months_ these are with keys and labels.  
 In for each in _anchor tag_ we provide route name, [all request Query, the key to the filter] this is so that the view for these filters is enabled whenever we view page see class too as that works for starting rendering.  
 Now, lets talk about **form** we added a **hidden input** type with _name = filter_ and _value = {{ request('filter') }}_ this is done because when ever the form is submitted the view gets to default and don't show previously choosen filter now this will work. And Hidden input is not shown too just submitted as request.
+
+### LOGIC
+
+So this logic part is the most important part here what we do here is ⤵️  
+🚀. In the Book model we add **Local Query Scope** functions namely _scopePopularLastMonth, scopePopularLast6Months, scopeHighestRatedLastMonth, scopeHighestRatedLast6Months_ these are made with previous made Query scopes we can check them in the Book model.    
+🚀. In ***BookController*** in **index** we can see along with *title* we fetch *filter or ''* and use
+```php
+$books = match($filter) {
+    'popular_last_month' =>$books->popularLastMonth(),
+    'popular_last_6month' =>$books->popularLast6Months(),
+    'highest_rated_last_month' =>$books->highestRatedLastMonth(),
+    'Highest_Rated_last_6month' =>$books->highestRatedLast6Months(),
+    default => $books->latest()
+};
+```
+what *match* does is it kinda behaves as switch case. 
+so based on *$filter* we decide query to be used
