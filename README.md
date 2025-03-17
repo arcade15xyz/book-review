@@ -418,4 +418,29 @@ $cacheKey = 'books:' . $filter . ':' . $title;
 $books = cache()->remember($cacheKey,3600,fn()=>$books->get);
 ```
 
-**remember(key,ttl,callback)** ➡️ remember only stores data if the key is not present only. _key_ is like the key for the given data. _ttl_ it means timeperiod. _callback_ is a function to get the data.
+**remember(key,ttl,callback)** ➡️ remember only stores data if the key is not present only. _key_ is like the key for the given data. _ttl_ it means timeperiod it is in seconds. _callback_ is a function to get the data.  
+[To learn more about **_Cache_** click here](https://laravel.com/docs/12.x/cache#introduction)
+
+## Invalidating Cache
+
+What it means is that if there is some updation, deletion etc in the database the cache cannot get the changed data until the timeperiod is over, after that it automatically again get for the data using _remember_.
+**But we can make sure on any updation or deletion etc on the database the _cache_ updates itself.** ⤵️  
+Lets take an example form this code itself there might be some change in the _reviews_ like _reviews->rating_ etc. so for that we need to go to the **review model** in it ⤵️
+
+```php
+    protected static function booted()
+    {
+        static::updated(fn (Review $review) => cache()->forget('book:'. $review->book_id));
+        static::deleted(fn(Review $review)=> cache()->forget('book:' . $review->book_id));
+    }
+```
+
+so form now on whenever there occurs an event the cache will be deleted so that it can use _remember_ and update itself.   
+***Mass assignment***   
+For this to work the fillable needs to be assigned.Here model is loaded.
+` $review->updated(['rating' => 1]);`
+***In some cases it don't work***   
+`\App\Models\Review::where('id',944)->update(['rating' => 2])`  
+now this is modified in database but not in page so that event is not triggered as this has *just run a query but not loaded the model* so the **booted** don't work
+
+[To know more about **events** click here](https://laravel.com/docs/12.x/eloquent#events)
