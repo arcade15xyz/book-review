@@ -365,8 +365,9 @@ Now, lets talk about **form** we added a **hidden input** type with _name = filt
 ### LOGIC
 
 So this logic part is the most important part here what we do here is ⤵️  
-🚀. In the Book model we add **Local Query Scope** functions namely _scopePopularLastMonth, scopePopularLast6Months, scopeHighestRatedLastMonth, scopeHighestRatedLast6Months_ these are made with previous made Query scopes we can check them in the Book model.    
-🚀. In ***BookController*** in **index** we can see along with *title* we fetch *filter or ''* and use
+🚀. In the Book model we add **Local Query Scope** functions namely _scopePopularLastMonth, scopePopularLast6Months, scopeHighestRatedLastMonth, scopeHighestRatedLast6Months_ these are made with previous made Query scopes we can check them in the Book model.  
+🚀. In **_BookController_** in **index** we can see along with _title_ we fetch _filter or ''_ and use
+
 ```php
 $books = match($filter) {
     'popular_last_month' =>$books->popularLastMonth(),
@@ -376,12 +377,15 @@ $books = match($filter) {
     default => $books->latest()
 };
 ```
-what *match* does is it kinda behaves as switch case. 
-so based on *$filter* we decide query to be used
 
-### ONE BOOK PAGE (show)
-We made another book view namely **show.blade.php** which shows us the reviews and details of the books.   
-In the **Book controller** in function *store* we use eager loading using *load* and a additional query for filtering.   
+what _match_ does is it kinda behaves as switch case.
+so based on _$filter_ we decide query to be used
+
+## ONE BOOK PAGE (show)
+
+We made another book view namely **show.blade.php** which shows us the reviews and details of the books.  
+In the **Book controller** in function _store_ we use eager loading using _load_ and a additional query for filtering.
+
 ```php
     public function show(Book $book)
     {
@@ -393,3 +397,25 @@ In the **Book controller** in function *store* we use eager loading using *load*
         ]);
     }
 ```
+
+## Cache and Caching Quries
+
+Some data retrival or processing tasks are CPU intensive so it takes time to retrive data to solve this, it is common to cache the retrived data for a period of time so that the retrival is fast on subsequent request.  
+The cache configuration file is situated in **config > cache.php**.
+
+### How to use cache
+
+lets take an example in **_BookController's index_** we add following ⤵️
+
+```php
+    $books = Cache::remember('books', 3600, fn () => $books->get());
+```
+
+OR
+
+```php
+$cacheKey = 'books:' . $filter . ':' . $title;
+$books = cache()->remember($cacheKey,3600,fn()=>$books->get);
+```
+
+**remember(key,ttl,callback)** ➡️ remember only stores data if the key is not present only. _key_ is like the key for the given data. _ttl_ it means timeperiod. _callback_ is a function to get the data.
