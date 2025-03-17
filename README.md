@@ -445,10 +445,9 @@ now this is modified in database but not in page so that event is not triggered 
 
 [To know more about **events** click here](https://laravel.com/docs/12.x/eloquent#events)
 
+## Rating and Review Count on All Pages
 
-
-## Rating and Review Count on All Pages   
-We are using **with** here instead of **load** as load is used when the model is already loaded and we don't have model loaded as we are not using **route model binding**(show(Book $book)). **load** is a instance method i.e method on a created object and we need static method of a class instead i.e(_with_). 
+We are using **with** here instead of **load** as load is used when the model is already loaded and we don't have model loaded as we are not using **route model binding**(show(Book $book)). **load** is a instance method i.e method on a created object and we need static method of a class instead i.e(_with_).
 
 ```php
     public function show(int $id)
@@ -467,4 +466,22 @@ We are using **with** here instead of **load** as load is used when the model is
     }
 ```
 
-So lets see what all is happening here in **Book model** we make 2 Query Scope Methods in which works as sub part of the other Query Scope Methods and can also be called from outside namely *scopeWithReviewsCount* and *scopeWithAvgRating*
+So lets see what all is happening here in **Book model** we make 2 Query Scope Methods in which works as sub part of the other Query Scope Methods and can also be called from outside namely _scopeWithReviewsCount_ and _scopeWithAvgRating_
+
+## Blade Component - Star rating component
+
+A **Blade Component** is same as a react component these are built with following command ⤵️  
+`php artisan make:component StarRating `  
+This command makes 2 files
+
+1. in **app\View\Component\StarRating.php** this file contains a class with a \_\_construct with a readonly argument which laravel declare itself _See this file_
+2. in **resources\views\components\star-rating.blade.php** this file contains the view UI _See this file_ .
+
+Both these files are interconnected.  
+To use this component in **views** add ⤵️
+
+```php
+<x-star-rating :rating="$book->reviews_avg_rating">
+```
+
+[To know more about **Blade Components** click](https://laravel.com/docs/12.x/blade#components)
