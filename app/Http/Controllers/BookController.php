@@ -28,16 +28,20 @@ class BookController extends Controller
             'popular_last_6month' => $books->popularLast6Months(),
             'highest_rated_last_month' => $books->highestRatedLastMonth(),
             'highest_rated_last_6months' => $books->highestRatedLast6Months(),
-            default => $books->latest()
+            default => $books->latest()->withAvgRating()->withReviewsCount()
         };
 
-        // $books = $books->get();
+        $books = $books->paginate(10);
 
         // $books = Cache::remember('books', 3600, fn () => $books->get()); Or
         $cacheKey = 'books:' . $filter . ':' . $title;
-        $books = cache()->remember($cacheKey, 3600, function () use ($books) {
-            return $books->get();
-        });
+        //$books =
+        // cache()->remember(
+            // $cacheKey,
+            // 3600,
+            // function () use ($books) {
+           // $books->get();
+        // });
 
         return view('books.index', ['books' => $books]);
     }
@@ -63,13 +67,18 @@ class BookController extends Controller
      * @param \App\Models\Book $book
      * @return \Illuminate\Contracts\View\View
      */
-    public function show(Book $book)
+    public function show(int $id)
     {
-
-        return view('books.show', [
-            'book' => $book->load([
+        $cacheKey = 'book:' . $id;
+        $book = cache()->remember(
+            $cacheKey,
+            3600,
+            fn() => Book::with([
                 'reviews' => fn($query) => $query->latest()
-            ])
+            ])->withAvgRating()->withReviewsCount()->findOrFail($id)
+        );
+        return view('books.show', [
+            'book' => $book
         ]);
     }
 

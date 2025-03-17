@@ -59,4 +59,8 @@
       </li>
     @endforelse
 </ul>
+    <!--Paginationa-->
+    <div class="mt-4">
+        {{ $books->links() }}
+    </div>
 @endsection

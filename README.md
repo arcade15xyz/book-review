@@ -435,12 +435,36 @@ Lets take an example form this code itself there might be some change in the _re
     }
 ```
 
-so form now on whenever there occurs an event the cache will be deleted so that it can use _remember_ and update itself.   
-***Mass assignment***   
+so form now on whenever there occurs an event the cache will be deleted so that it can use _remember_ and update itself.  
+**_Mass assignment_**  
 For this to work the fillable needs to be assigned.Here model is loaded.
-` $review->updated(['rating' => 1]);`
-***In some cases it don't work***   
+` $review->updated(['rating' => 1]);`  
+**_In some cases it don't work_**  
 `\App\Models\Review::where('id',944)->update(['rating' => 2])`  
-now this is modified in database but not in page so that event is not triggered as this has *just run a query but not loaded the model* so the **booted** don't work
+now this is modified in database but not in page so that event is not triggered as this has _just run a query but not loaded the model_ so the **booted** don't work
 
 [To know more about **events** click here](https://laravel.com/docs/12.x/eloquent#events)
+
+
+
+## Rating and Review Count on All Pages   
+We are using **with** here instead of **load** as load is used when the model is already loaded and we don't have model loaded as we are not using **route model binding**(show(Book $book)). **load** is a instance method i.e method on a created object and we need static method of a class instead i.e(_with_). 
+
+```php
+    public function show(int $id)
+    {
+        $cacheKey = 'book:' . $id;
+        $book = cache()->remember(
+            $cacheKey,
+            3600,
+            fn() => Book::with([
+                'reviews' => fn($query) => $query->latest()
+            ])->withAvgRating()->withReviewsCount()->findOrFail($id)
+        );
+        return view('books.show', [
+            'book' => $book
+        ]);
+    }
+```
+
+So lets see what all is happening here in **Book model** we make 2 Query Scope Methods in which works as sub part of the other Query Scope Methods and can also be called from outside namely *scopeWithReviewsCount* and *scopeWithAvgRating*
