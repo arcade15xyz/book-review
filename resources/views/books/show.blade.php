@@ -9,6 +9,7 @@
       <div class="book-rating flex items-center">
         <div class="mr-2 text-sm font-medium text-slate-700">
           {{ number_format($book->reviews_avg_rating, 1) }}
+          {{-- the component --}}
           <x-star-rating :rating="$book->reviews_avg_rating"/>
         </div>
         <span class="book-review-count text-sm text-gray-500">
@@ -16,6 +17,10 @@
         </span>
       </div>
     </div>
+  </div>
+
+  <div class="mb-4">
+    <a href="{{ route('books.reviews.create',  $book) }}" class="reset-link">Add a review!</a>
   </div>
 
   <div>

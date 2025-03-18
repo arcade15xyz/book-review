@@ -95,7 +95,7 @@ class BookController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        
     }
 
     /**

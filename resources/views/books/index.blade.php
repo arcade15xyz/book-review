@@ -3,6 +3,7 @@
 @section('content')
 <h1 class="mb-10 text-2xl">Books</h1>
 
+{{-- searching --}}
 <form method="GET" action="{{ route('books.index') }}" class="mb-4 flex items-center space-x-2">
     <input type="text" name="title" placeholder="Search by title" value="{{ request('title') }}" class="input h-10"/>
     <input type="hidden" name="filter" value="{{ request('filter') }}"/>
@@ -10,6 +11,7 @@
     <a href="{{ route('books.index') }}" class="btn h-10">Clear</a>
 </form>
 
+{{-- filters --}}
 <div class="filter-container mb-4 flex">
     @php
         $filters = [
@@ -29,6 +31,7 @@
 
 </div>
 
+{{-- the books according to the filter --}}
 <ul>
     @forelse($books as $book)
     <li class="mb-4">
@@ -59,6 +62,7 @@
       </li>
     @endforelse
 </ul>
+
     <!--Paginationa-->
     <div class="mt-4">
         {{ $books->links() }}

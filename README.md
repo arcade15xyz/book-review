@@ -466,7 +466,7 @@ We are using **with** here instead of **load** as load is used when the model is
     }
 ```
 
-So lets see what all is happening here in **Book model** we make 2 Query Scope Methods in which works as sub part of the other Query Scope Methods and can also be called from outside namely _scopeWithReviewsCount_ and _scopeWithAvgRating_
+So lets see what all is happening here in **Book model** we make 2 Query Scope Methods in which works as sub part of the other Query Scope Methods and can also be called from outside namely _scopeWithReviewsCount_ and _scopeWithAvgRating_ then we can add the ***booted function in model ***
 
 ## Blade Component - Star rating component
 
@@ -485,3 +485,18 @@ To use this component in **views** add ⤵️
 ```
 
 [To know more about **Blade Components** click](https://laravel.com/docs/12.x/blade#components)
+
+
+## Scoped Resource Controller - Adding a review   
+
+So these **Scoped Resource Controller** are the the controller that are scoped i.e. if they have some relations to a parent they are connected to the specific parent model automatically to the parent they are in relation with. how does that work ⤵️   
+```php
+Route::resource('books.reviews' , ReviewController::class)->scoped(['review' => 'book'])
+->only(['create','store']);
+```   
+This route will register a scoped nested resource that may be accessed with URIs like the following:   
+`/books/79/reviews/create`   
+
+and as we are creating this review and the reviews are in cache so for it to regain the data again we need to add actions in *booted* function in the model for review (Perform any actions required after the model boots.) 
+
+[To know more about **Scoped Resource Controller**](https://laravel.com/docs/12.x/controllers#restful-scoping-resource-routes)
