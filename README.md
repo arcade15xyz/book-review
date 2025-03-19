@@ -466,7 +466,7 @@ We are using **with** here instead of **load** as load is used when the model is
     }
 ```
 
-So lets see what all is happening here in **Book model** we make 2 Query Scope Methods in which works as sub part of the other Query Scope Methods and can also be called from outside namely _scopeWithReviewsCount_ and _scopeWithAvgRating_ then we can add the ***booted function in model ***
+So lets see what all is happening here in **Book model** we make 2 Query Scope Methods in which works as sub part of the other Query Scope Methods and can also be called from outside namely _scopeWithReviewsCount_ and _scopeWithAvgRating_ then we can add the **_booted function in model _**
 
 ## Blade Component - Star rating component
 
@@ -486,17 +486,84 @@ To use this component in **views** add ⤵️
 
 [To know more about **Blade Components** click](https://laravel.com/docs/12.x/blade#components)
 
+## Scoped Resource Controller - Adding a review
 
-## Scoped Resource Controller - Adding a review   
+So these **Scoped Resource Controller** are the the controller that are scoped i.e. if they have some relations to a parent they are connected to the specific parent model automatically to the parent they are in relation with. how does that work ⤵️
 
-So these **Scoped Resource Controller** are the the controller that are scoped i.e. if they have some relations to a parent they are connected to the specific parent model automatically to the parent they are in relation with. how does that work ⤵️   
 ```php
 Route::resource('books.reviews' , ReviewController::class)->scoped(['review' => 'book'])
 ->only(['create','store']);
-```   
-This route will register a scoped nested resource that may be accessed with URIs like the following:   
-`/books/79/reviews/create`   
+```
 
-and as we are creating this review and the reviews are in cache so for it to regain the data again we need to add actions in *booted* function in the model for review (Perform any actions required after the model boots.) 
+This route will register a scoped nested resource that may be accessed with URIs like the following:  
+`/books/79/reviews/create`
+
+and as we are creating this review and the reviews are in cache so for it to regain the data again we need to add actions in _booted_ function in the model for review (Perform any actions required after the model boots.)
 
 [To know more about **Scoped Resource Controller**](https://laravel.com/docs/12.x/controllers#restful-scoping-resource-routes)
+
+## Rate Limiting
+
+Rate limiting in Laravel helps to prevent abuse by restricting how many requests a user/IP can make within a given time frame. Laravel provides built-in support for rate limiting using the RateLimiter facade.  
+In Laravel 12 rate limiter are registered inside bootstrap/app.php using `withBooting()` or inside a **Customer Service Providers** in app/Providers/AppServiceProvider.
+
+_how to make a provider_  
+`php artisan make:provider RateLimitServiceProvider`  
+here we are using server provider method.
+
+let's see how it is done using `withBooting()` in bootstrap/app.php
+
+```php
+return Application::configure(basePath: dirname(__DIR__))
+    ->withRouting(
+        web: __DIR__.'/../routes/web.php',
+        commands: __DIR__.'/../routes/console.php',
+        health: '/up',
+    )
+    ->withBooting(function () {
+        use Illuminate\Cache\RateLimiting\Limit;
+        use Illuminate\Http\Request;
+        use Illuminate\Support\Facades\RateLimiter;
+
+        RateLimiter::for('reviews', function (Request $request) {
+            return Limit::perMinute(3)->by(optional($request->user())->id ?: $request->ip());
+        });
+    })
+    ->create();
+
+```
+
+now using Provider
+
+```php
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
+
+class RateLimiterServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        RateLimiter::for('reviews', function (Request $request) {
+            return Limit::perMinute(3)->by(optional($request->user())->id ?: $request->ip());
+        });
+    }
+}
+
+```
+
+And then in the route
+
+```php
+Route::resource('books.reviews' , ReviewController::class)->scoped(['review' => 'book'])
+->only(['create','store'])
+->middleware('throttle:reviews');
+
+```
+
+[Info on **RATE LIMITING**](https://laravel.com/docs/12.x/rate-limiting#main-content)
